@@ -188,6 +188,43 @@ dl.kv dd{margin:0;min-width:0}
 .lightbox{position:fixed;inset:0;z-index:30;background:rgba(5,10,15,.9);display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:calc(60px + env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) calc(24px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
 .lightbox img{max-width:min(100%,900px);height:auto;border-radius:8px}
 .lightbox .close{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));right:max(12px,env(safe-area-inset-right,0px));background:#fff;color:#111;border:0;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer}
+.assist{border:1px solid var(--line);border-radius:8px;background:var(--sunk)}
+.assist>summary{list-style:none;cursor:pointer;padding:10px 12px;display:flex;align-items:center;gap:8px;font-weight:700;font-size:.92rem}
+.assist>summary::-webkit-details-marker{display:none}
+.assist .achev{margin-left:auto;color:var(--muted);transition:transform .2s}
+.assist[open]>summary .achev{transform:rotate(90deg)}
+.assist .inner{padding:0 12px 12px;display:flex;flex-direction:column}
+.atag{font-family:var(--f-mono);font-size:.72rem;color:var(--muted);font-weight:700}
+.checks{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px;font-size:.92rem}
+.vgroup{font-family:var(--f-mono);font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-top:12px;padding-bottom:2px}
+.vgroup:first-child{margin-top:0}
+.vterm{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px dashed var(--line)}
+.vgroup+.vterm,.inner>.vterm:first-child{border-top:0}
+.vt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.vt b{font-family:var(--f-display);font-size:.98rem}
+.vd{font-size:.88rem}
+.ve{font-size:.85rem;color:var(--muted);font-style:italic;border-left:3px solid var(--mark);padding-left:8px;margin-top:2px}
+.vadd{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:4px 12px;font-size:.8rem;font-weight:700;cursor:pointer}
+/* glossary tab */
+.gbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:8px 10px;display:flex;flex-direction:column;gap:10px;border-bottom:1px solid var(--line)}
+.gsearch{position:relative}
+.gsearch input{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:11px 44px 11px 40px;font-size:1rem}
+.gsearch svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.gclear{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:var(--sunk);color:var(--ink);border-radius:999px;width:32px;height:32px;cursor:pointer;font-weight:700}
+.gchips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.gchips::-webkit-scrollbar{display:none}
+.gchip{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:.85rem;font-weight:700;cursor:pointer;white-space:nowrap}
+.gchip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.gcat{margin-top:22px;display:flex;flex-direction:column;gap:4px}
+.gcat .blurb{font-size:.92rem;color:var(--muted);margin-bottom:6px}
+.glist{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.gterm{padding:12px 14px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:3px}
+.gterm:first-child{border-top:0}
+.gterm .gt{font-family:var(--f-display);font-weight:700;font-size:1.05rem}
+.gterm .gp{font-size:1rem}
+.gterm .ve{margin-top:4px}
+#view-glossary mark{background:var(--mark);color:var(--ink);border-radius:2px;padding:0 1px}
+.gempty{padding:28px 16px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:var(--r);margin-top:20px}
 @media (max-width:520px){
   .who,.ratings{grid-template-columns:1fr}
   .lenses{grid-template-columns:1fr}
@@ -204,12 +241,13 @@ dl.kv dd{margin:0;min-width:0}
   <header class="top">
     <span class="eyebrow">UX/UI portfolio research · 10-minute review</span>
     <h1>Portfolio Review Kit</h1>
-    <p class="muted">Same six stages for every portfolio. Note what happened and why it matters.</p>
+    <p class="muted">Six timed stages, with expert checks and the right vocabulary in each one. Note what happened and why it matters.</p>
     <button class="btn install" id="installBtn" hidden>Install app</button>
   </header>
 
   <div class="tabs" role="tablist">
     <button role="tab" id="tab-review" aria-selected="true" aria-controls="view-review">Review</button>
+    <button role="tab" id="tab-glossary" aria-selected="false" aria-controls="view-glossary">Glossary</button>
     <button role="tab" id="tab-log" aria-selected="false" aria-controls="view-log">Log <span id="logCount"></span></button>
   </div>
 
@@ -253,6 +291,20 @@ dl.kv dd{margin:0;min-width:0}
     </div>
   </section>
 
+  <section id="view-glossary" role="tabpanel" aria-labelledby="tab-glossary" hidden>
+    <div class="gbar">
+      <div class="gsearch">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <input type="search" id="gq" placeholder="Search a word, e.g. leading or hierarchy" aria-label="Search terms" autocomplete="off">
+        <button class="gclear" id="gclear" aria-label="Clear search" hidden>×</button>
+      </div>
+      <div class="gchips" id="gchips" role="group" aria-label="Filter by category"></div>
+      <span class="count" id="gcount"></span>
+    </div>
+    <div id="glist"></div>
+    <div class="gempty" id="gempty" hidden>No terms match that. Try a shorter word.</div>
+  </section>
+
   <section id="view-log" role="tabpanel" aria-labelledby="tab-log" hidden>
     <div class="stack" id="log"></div>
     <div class="backup">
@@ -266,6 +318,275 @@ dl.kv dd{margin:0;min-width:0}
 <div class="lightbox" id="lightbox" hidden><button class="close" id="lbClose">Close</button><img id="lbImg" alt="Screenshot, full size"></div>
 
 <script>
+const CATS=[
+{id:'first',name:'First impressions',blurb:'Words for the overall look and feel in the first few seconds.',terms:[
+ ['Visual tone','The mood the design gives off: playful, serious, luxurious, technical.','The muted palette and generous spacing create a calm, premium visual tone.'],
+ ['Aesthetic','The overall style or look a design commits to.','The site follows a minimalist aesthetic that keeps attention on the case studies.'],
+ ['Minimalist','Uses only essential elements, lots of whitespace and a restrained palette.','The minimalist layout makes the project thumbnails the clear focus.'],
+ ['Maximalist','Bold, busy and layered, with lots of colour, type and imagery.','The maximalist homepage is memorable but makes the navigation harder to spot.'],
+ ['Brutalist','Raw, deliberately unpolished design: default fonts, hard edges, visible structure.','The brutalist style signals personality but sacrifices some readability.'],
+ ['Flat design','Simple shapes and solid colours with no shadows, gradients or textures.',''],
+ ['Skeuomorphism','Making digital elements imitate real objects, like a notebook with paper texture.',''],
+ ['Glassmorphism','Frosted-glass panels: blurred, semi-transparent layers over colourful backgrounds.','The glassmorphism cards look modern but lower the text contrast.'],
+ ['Swiss style','Also called International Typographic Style. Strict grids, sans-serif type, asymmetric layouts and lots of whitespace.',''],
+ ['Editorial layout','A layout inspired by magazines: large type, varied column widths, strong imagery.',''],
+ ['Visual identity','The consistent set of logo, colours, type and imagery that makes a brand recognisable.','A clear visual identity runs across every page, from the logo to the buttons.'],
+ ['Above the fold','The part of the page visible before scrolling.','The designer\'s specialism appears above the fold, so visitors understand it instantly.'],
+ ['Hero section','The large opening area at the top of a homepage, usually a headline, image and call to action.','The hero section states who the designer is and links straight to their work.'],
+ ['Value proposition','A short statement of what someone offers and why it matters.','The hero lacks a clear value proposition, so it is unclear what the designer specialises in.'],
+ ['Polish','The level of finish and attention to detail.','The site feels polished, with consistent spacing and smooth hover states.']
+]},
+{id:'layout',name:'Layout and composition',blurb:'How elements are arranged on the page.',terms:[
+ ['Visual hierarchy','The order in which the eye notices things, set by size, colour, weight and position.','A strong visual hierarchy leads the eye from the headline to the featured project.'],
+ ['Focal point','The element that draws attention first.','The large project image acts as the focal point of each case study.'],
+ ['Grid','An invisible framework of columns and rows that elements align to.','A 12-column grid keeps the project cards evenly aligned.'],
+ ['Gutter','The gap between columns in a grid.',''],
+ ['Margin','The space around the outside edge of the content.',''],
+ ['Padding','The space inside an element, between its edge and its content.',''],
+ ['Whitespace','Empty space around and between elements. Also called negative space.','Generous whitespace gives each project room to breathe.'],
+ ['Alignment','Lining elements up along a shared edge or centre line.','Inconsistent left alignment makes the About page feel untidy.'],
+ ['Balance','How visual weight is distributed. Symmetrical balance feels formal; asymmetrical feels dynamic.','The asymmetrical layout feels dynamic while staying balanced.'],
+ ['Visual weight','How strongly an element pulls attention, based on size, colour, contrast and density.',''],
+ ['Density','How much content is packed into a space.','The case study\'s high text density makes it tiring to read on a phone.'],
+ ['Rule of thirds','Placing key elements along lines that divide the space into thirds.',''],
+ ['F-pattern','A common scanning path for text-heavy pages: across the top, then down the left side.','Key details sit on the left, matching the F-pattern people use to scan.'],
+ ['Z-pattern','A scanning path for simple pages: top left to top right, diagonally down, then across the bottom.',''],
+ ['Card layout','Content grouped into separate boxes, each with an image, title and short text.','The card layout lets visitors compare projects at a glance.'],
+ ['Bento grid','A grid of tiles in mixed sizes, like a bento box.',''],
+ ['Full-bleed','An image or block that runs right to the edges of the screen with no margin.',''],
+ ['Sticky header','A header that stays fixed at the top while the page scrolls.','The sticky header keeps navigation in reach on long case studies.'],
+ ['Rhythm','Repeated, consistent spacing that makes a page feel orderly.','A consistent vertical rhythm makes the case study easy to follow.']
+]},
+{id:'type',name:'Typography',blurb:'Words for describing text and how it is set.',terms:[
+ ['Typeface vs font','A typeface is the design family, like Helvetica. A font is one style of it, like Helvetica Bold 16px.',''],
+ ['Serif','Typefaces with small strokes at the ends of letters. Often feel traditional or editorial.',''],
+ ['Sans-serif','Typefaces without those strokes. Often feel clean and modern.','A clean sans-serif typeface keeps body text legible on small screens.'],
+ ['Display typeface','A characterful face designed for large headings, not body text.',''],
+ ['Font pairing','Combining two typefaces that complement each other, often one for headings and one for body text.','The serif headings pair well with the neutral sans-serif body text.'],
+ ['Type scale','A set of related text sizes used consistently across a design.','A clear type scale separates headings, subheadings and body text.'],
+ ['Font weight','How thick the strokes are: light, regular, bold and so on.',''],
+ ['Leading','The vertical space between lines of text. In CSS it is line-height.','Tight leading makes the paragraphs feel cramped.'],
+ ['Tracking','The even spacing across a whole word or line. In CSS it is letter-spacing.','Slightly wider tracking on the uppercase labels improves readability.'],
+ ['Kerning','The space between two specific letters.',''],
+ ['Measure','The length of a line of text. About 45–75 characters is comfortable.','Lines run the full screen width, so the measure is too long to read comfortably.'],
+ ['x-height','The height of lowercase letters like x. A larger x-height reads better at small sizes.',''],
+ ['Legibility','How easily individual letters can be told apart.',''],
+ ['Readability','How easily whole blocks of text can be read, affected by size, spacing, measure and contrast.','Readability suffers because the grey body text is small and tightly spaced.'],
+ ['Ragged right','Left-aligned text with an uneven right edge. Easier to read than justified text on screens.',''],
+ ['Justified','Text stretched so both edges are straight, which can create uneven gaps between words.',''],
+ ['Widow / orphan','A single word or short line left stranded at the end or start of a paragraph or column.','']
+]},
+{id:'colour',name:'Colour',blurb:'Words for describing colour choices.',terms:[
+ ['Palette','The set of colours a design uses.','A restrained palette of navy, white and one orange accent keeps the site focused.'],
+ ['Primary, secondary, accent','The main brand colour, the supporting colour, and the highlight used for actions or emphasis.','The orange accent is reserved for calls to action, so buttons stand out.'],
+ ['Hue','The colour itself: red, blue, green.',''],
+ ['Saturation','How intense or muted a colour is.','Desaturated colours give the site a calm, mature feel.'],
+ ['Value / lightness','How light or dark a colour is.',''],
+ ['Tint, shade, tone','A colour mixed with white (tint), black (shade), or grey (tone).',''],
+ ['Monochromatic','Using tints and shades of a single hue.',''],
+ ['Analogous','Colours next to each other on the colour wheel, like blue and teal. Feels harmonious.',''],
+ ['Complementary','Colours opposite each other on the colour wheel, like blue and orange. Feels high-energy.',''],
+ ['Colour temperature','Whether colours feel warm (reds, oranges) or cool (blues, greens).',''],
+ ['60-30-10 rule','A guideline: 60% dominant colour, 30% secondary, 10% accent.',''],
+ ['Neutrals','Greys, whites, blacks and off-whites used for backgrounds and text.',''],
+ ['Semantic colour','Colour that carries meaning: green for success, red for errors, amber for warnings.','Error messages rely on red alone, which colour-blind users may miss.'],
+ ['Dark mode','An alternative colour scheme with light text on a dark background.','']
+]},
+{id:'gestalt',name:'Gestalt and perception',blurb:'Principles that explain how people group and read what they see.',terms:[
+ ['Gestalt principles','Rules describing how the brain groups visual elements into patterns.',''],
+ ['Proximity','Items placed close together are seen as related.','Each project title sits close to its description, so they read as one unit.'],
+ ['Similarity','Items that look alike are seen as related.','All links share one colour, so visitors learn what is clickable.'],
+ ['Common region','Items inside the same boundary, like a card, are seen as a group.',''],
+ ['Closure','The brain fills in gaps to see a complete shape.',''],
+ ['Continuity','The eye follows lines and curves, so aligned items feel connected.',''],
+ ['Figure-ground','Separating a foreground object from its background.','Low figure-ground contrast makes the buttons blend into the background.'],
+ ['Affordance','What an object looks like it lets you do.','The flat text links have weak affordance, so they do not look clickable.'],
+ ['Signifier','A visual cue that shows how to interact, like an underline, arrow or button shape.','Adding arrows as signifiers would make the cards look clickable.']
+]},
+{id:'nav',name:'Navigation and UX',blurb:'How people find their way and how hard it feels.',terms:[
+ ['Information architecture (IA)','How content is organised, structured and labelled.','The IA is simple: Work, About and Contact, so nothing is hard to find.'],
+ ['Global navigation','The main menu that appears on every page.',''],
+ ['Hamburger menu','The three-line icon that hides navigation behind a tap.','On desktop, hiding the menu behind a hamburger adds an unnecessary extra click.'],
+ ['Breadcrumbs','A trail showing where you are, like Home › Work › Project.',''],
+ ['Wayfinding','How well people can tell where they are and where to go next.','Clear back links and next-project buttons support wayfinding.'],
+ ['Call to action (CTA)','A prompt to take an action, like "View case study" or "Get in touch".','The CTA at the end of each case study keeps visitors exploring.'],
+ ['User flow','The path a person takes to complete a task.',''],
+ ['Friction','Anything that slows people down or causes effort or confusion.','Contact details only appear in a PDF CV, which adds friction.'],
+ ['Cognitive load','The mental effort needed to use something.','Twelve menu items increase cognitive load on first visit.'],
+ ['Progressive disclosure','Showing only what is needed first, and revealing more on demand.','The case study uses progressive disclosure, with research details in expandable sections.'],
+ ['Scannability','How easily people can skim a page for what they need.','Short sections with clear headings make the case study highly scannable.'],
+ ['Mental model','What users expect something to be like, based on past experience.',''],
+ ['Jakob\'s law','People spend most time on other sites, so they expect yours to work the same way.','Putting the logo top left follows Jakob\'s law, so it feels familiar.'],
+ ['Hick\'s law','The more choices there are, the longer it takes to decide.',''],
+ ['Fitts\'s law','Larger, closer targets are faster and easier to hit.','Small text links in the footer are hard to tap, as Fitts\'s law predicts.'],
+ ['Dead end','A page with no obvious next step.','The final case study page is a dead end, with no link to other projects.'],
+ ['Microcopy','Small bits of interface text: button labels, hints, error messages.','']
+]},
+{id:'ui',name:'UI components and interaction',blurb:'Names for the building blocks and how they respond.',terms:[
+ ['Component','A reusable interface element, like a button, card or form field.',''],
+ ['Design system','A shared library of components, styles and rules that keeps a product consistent.',''],
+ ['States','How an element looks in different situations: default, hover, focus, active, disabled.','Buttons have no hover state, so they feel unresponsive.'],
+ ['Microinteraction','A small, single-purpose animation or response, like a button changing when tapped.',''],
+ ['Feedback','The system showing that an action happened, like a message or change of state.',''],
+ ['Transition','Animation between two states or pages.',''],
+ ['Modal','A window that appears on top of the page and blocks it until closed.',''],
+ ['Toast','A brief message that pops up and disappears by itself.',''],
+ ['Carousel','A rotating set of slides. Often criticised because later slides get little attention.','Projects in the carousel beyond slide two are easy to miss.'],
+ ['Accordion','Sections that expand and collapse when tapped.',''],
+ ['Tooltip','A small label that appears on hover or focus.',''],
+ ['Empty state','What a screen shows when there is no content yet.',''],
+ ['Skeleton screen','Grey placeholder shapes shown while content loads.',''],
+ ['Iconography','The style and set of icons used.','Icons share a consistent line weight, which supports the clean style.'],
+ ['Consistency','Similar things looking and behaving the same way everywhere.','Button styles change between pages, which weakens consistency.']
+]},
+{id:'a11y',name:'Accessibility',blurb:'Whether everyone can use it, including disabled people.',terms:[
+ ['WCAG','Web Content Accessibility Guidelines, the international standard for accessible websites. Level AA is the usual target.',''],
+ ['Contrast ratio','How different the text and background colours are, from 1:1 to 21:1. AA needs 4.5:1 for body text and 3:1 for large text and UI parts.','The grey body text measures 3.1:1, below the 4.5:1 AA minimum.'],
+ ['Alt text','A written description of an image, read out by screen readers.',''],
+ ['Screen reader','Software that reads a page aloud for blind and visually impaired users.',''],
+ ['Keyboard navigation','Using a site with the Tab, Enter and arrow keys instead of a mouse.','Every link can be reached with the Tab key.'],
+ ['Focus indicator','The visible outline showing which element is selected when using a keyboard.','The focus indicator has been removed, so keyboard users lose their place.'],
+ ['Touch target','The tappable area of a control. WCAG AA asks for at least 24×24px; 44×44px is the comfortable guideline.','Social icons are too small as touch targets on mobile.'],
+ ['Semantic HTML','Using the right HTML element for the job, like a real button or heading, so assistive tech understands the page.',''],
+ ['Reduced motion','A setting that asks sites to tone down animation for people affected by movement.',''],
+ ['Colour blindness','Difficulty telling certain colours apart, most often red and green.',''],
+ ['Inclusive design','Designing from the start for the widest range of people and abilities.','']
+]},
+{id:'content',name:'Imagery and content',blurb:'Words for images, writing and how work is presented.',terms:[
+ ['Mockup','A realistic image showing a design in context, like on a phone or laptop.','Device mockups show the work in context, but some screens are too small to read.'],
+ ['Photography style','The consistent look of photos: lighting, colour grading, framing.',''],
+ ['Illustration style','The consistent look of drawn graphics.',''],
+ ['Decorative vs informative imagery','Images that only add atmosphere, versus images that explain something.','Most images are decorative, so they do not show how the design works.'],
+ ['Tone of voice','The personality of the writing: friendly, formal, witty.','A friendly, first-person tone of voice makes the designer feel approachable.'],
+ ['Content hierarchy','Ordering content so the most important information comes first.',''],
+ ['Social proof','Evidence others value the work: testimonials, client logos, awards.',''],
+ ['Artefact','A tangible output of the process, like a persona, journey map or wireframe.','The case study shows artefacts but does not explain how they shaped decisions.']
+]},
+{id:'process',name:'UX process and case studies',blurb:'Language for judging how well a designer explains their work.',terms:[
+ ['Case study','A write-up of one project: the problem, process, decisions and outcome.',''],
+ ['Problem statement','A clear description of the problem, who has it and why it matters.','A clear problem statement frames the whole case study.'],
+ ['Design rationale','The reasons behind a design decision.','The rationale links each navigation change to a usability-test finding.'],
+ ['Persona','A fictional profile representing a group of real users, based on research.',''],
+ ['Empathy map','A grid of what users say, think, do and feel.',''],
+ ['User journey map','A timeline of a user\'s steps, feelings and pain points while completing a goal.',''],
+ ['Pain point','A specific problem or frustration users experience.',''],
+ ['How might we (HMW)','A question that turns a problem into an opportunity, like "How might we make booking faster?"',''],
+ ['Affinity mapping','Grouping research notes into themes.',''],
+ ['Card sorting','A method where users group content into categories, used to plan information architecture.',''],
+ ['Wireframe','A simple layout sketch showing structure, without visual styling.',''],
+ ['Low / high fidelity','How close a design is to the finished product. Lo-fi is rough; hi-fi looks real.',''],
+ ['Prototype','A clickable model of a design used for testing.',''],
+ ['Usability testing','Watching real people try to complete tasks with a design.','Usability testing revealed that users missed the filter, which led to a redesign.'],
+ ['Heuristic evaluation','Expert review against established principles, most often Nielsen\'s 10 usability heuristics.',''],
+ ['A/B testing','Comparing two versions to see which performs better.',''],
+ ['Iteration','Improving a design in repeated cycles of testing and changing.','The case study shows three iterations, each responding to test results.'],
+ ['Constraints','Limits the project had to work within: time, budget, technology, brief.',''],
+ ['Stakeholder','Anyone with an interest in the project, like a client, manager or developer.',''],
+ ['MVP','Minimum viable product: the simplest version that can be released and tested.',''],
+ ['Outcome / impact','The measurable or observed result of the work.','The outcome is stated as a 30% faster task time from testing.']
+]},
+{id:'tech',name:'Responsive and performance',blurb:'Terms for how a site adapts and how fast it is.',terms:[
+ ['Responsive design','A layout that adapts to different screen sizes.','The responsive layout stacks cleanly into one column on mobile.'],
+ ['Mobile-first','Designing for small screens first, then scaling up.',''],
+ ['Breakpoint','The screen width where a layout changes.',''],
+ ['Viewport','The visible area of a page on a screen.',''],
+ ['Load time','How long a page takes to appear and become usable.','Large uncompressed images slow the load time noticeably on 4G.'],
+ ['Lazy loading','Loading images only as they scroll into view.',''],
+ ['Layout shift','Content jumping around while the page loads.','Text jumps as images load, an unstable layout shift.'],
+ ['Core Web Vitals','Google\'s speed and stability measures: LCP (loading), INP (responsiveness) and CLS (layout shift).','']
+]},
+{id:'phrases',name:'Phrases for write-ups',blurb:'Sentence starters for turning observations into analysis. Fill in the gaps.',phrases:true,terms:[
+ ['<b>The site establishes</b> a clear visual hierarchy through…',''],
+ ['<b>This creates</b> a sense of… <b>which suits</b> a designer specialising in…',''],
+ ['<b>The use of</b> [technique] <b>supports</b> scannability <b>because</b>…',''],
+ ['<b>A point of friction is</b>… <b>which means visitors have to</b>…',''],
+ ['<b>Consistency is maintained</b> across… <b>but breaks down</b> when…',''],
+ ['<b>The case study demonstrates reasoning by</b> linking [finding] to [decision].',''],
+ ['<b>The work shows artefacts but</b> does not explain how they influenced…',''],
+ ['<b>From an accessibility perspective</b>, … <b>falls below</b> the WCAG AA contrast ratio.',''],
+ ['<b>On mobile</b>, the layout… <b>which</b> improves / reduces…',''],
+ ['<b>A principle I could apply to my own portfolio is</b>… <b>because</b>…',''],
+ ['<b>Compared with</b> [other portfolio], <b>this site</b>…','']
+]}
+];
+
+const STAGE_HELP={
+ first:{cats:['first'],checks:[
+  'Five-second test: look at the home page for five seconds, look away, then say who the designer is and what they do.',
+  'Write down three adjectives for your gut reaction before you start analysing.',
+  'Check what sits above the fold: is there a clear value proposition and an obvious next step?']},
+ nav:{cats:['nav','ui'],checks:[
+  'Get to the contact details in as few clicks as you can, and count the clicks.',
+  'Open a case study, then get back to the home page without using the browser Back button.',
+  'Read only the menu labels: would a stranger know what is behind each one?',
+  'Hover over and tap things: do links and buttons show clear states and feedback?']},
+ visual:{cats:['layout','type','colour','gestalt','content'],checks:[
+  'Squint test: blur your eyes. Whatever still stands out is the real visual hierarchy.',
+  'Read only the headings. Do they tell the story on their own?',
+  'Count the typefaces and accent colours. More than two of either is worth noting.',
+  'Run the faintest text through the contrast check below.',
+  'Zoom the page to 200%. Does anything overlap, get cut off or break?']},
+ case:{cats:['process','content'],checks:[
+  'Pick one design decision and trace it back to the evidence that caused it.',
+  'Check whether you can tell what the designer did personally, compared with the team.',
+  'Look for something that failed or changed. Honest iteration is a strong sign of real process.',
+  'Spot artefacts (personas, journey maps) and ask whether the text explains how they were used.']},
+ mobile:{cats:['a11y','tech'],checks:[
+  'Narrow the browser window slowly and watch where the layout breaks.',
+  'Press Tab from the top of the page. Can you always see where you are?',
+  'On your phone, tap every link with your thumb. Are any targets too small?',
+  'Check whether images have alt text (right-click and Inspect, or use a screen reader).']},
+ take:{cats:['phrases'],phrases:true,checks:[
+  'Pick your strongest example, not just the first one you noticed.',
+  'Stuck? Write the "why it matters" half first, then the observation.',
+  'Use at least one proper term from the Glossary in each note.']}
+};
+const strip=x=>x.replace(/<[^>]+>/g,'');
+const openAssist=new Set();
+const lastTA={};
+const achev='<svg class="achev" width="14" height="14" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
+function assistHTML(s){
+  const h=STAGE_HELP[s.id];if(!h)return '';
+  const cats=CATS.filter(c=>h.cats.includes(c.id));
+  const n=cats.reduce((a,c)=>a+c.terms.length,0);
+  const ck=s.id+'-checks',wk=s.id+'-words';
+  const checks=`<details class="assist" data-a="${ck}" ${openAssist.has(ck)?'open':''}><summary>Expert checks <span class="atag">${h.checks.length}</span>${achev}</summary><div class="inner"><ol class="checks">${h.checks.map(c=>`<li>${esc(c)}</li>`).join('')}</ol></div></details>`;
+  const body=cats.map(c=>(cats.length>1?`<span class="vgroup">${esc(c.name)}</span>`:'')+c.terms.map((t,i)=>c.phrases
+    ?`<div class="vterm"><span class="vt"><span class="vd">${t[0]}</span></span><button type="button" class="vadd" data-ins="${s.id}" data-cat="${c.id}" data-i="${i}" aria-label="Add this phrase to your notes">Add</button></div>`
+    :`<div class="vterm"><span class="vt"><b>${esc(t[0])}</b><span class="vd">${esc(t[1])}</span>${t[2]?`<span class="ve">${esc(t[2])}</span>`:''}</span><button type="button" class="vadd" data-ins="${s.id}" data-cat="${c.id}" data-i="${i}" aria-label="Add ${esc(t[0])} to your notes">Add</button></div>`).join('')).join('');
+  const words=`<details class="assist" data-a="${wk}" ${openAssist.has(wk)?'open':''}><summary>${h.phrases?'Phrases to use':'Words to use'} <span class="atag">${n}</span>${achev}</summary><div class="inner">${body}</div></details>`;
+  return checks+words;
+}
+function insertTerm(b){
+  const sid=b.dataset.ins;const c=CATS.find(x=>x.id===b.dataset.cat);const t=c.terms[+b.dataset.i];
+  const text=c.phrases?strip(t[0]):t[0];
+  const ta=document.getElementById(lastTA[sid])||document.getElementById(sid==='take'?'f-best':'n-'+sid);
+  if(!ta)return;
+  const sep=ta.value&&!/\s$/.test(ta.value)?(c.phrases?'\n':' '):'';
+  ta.value+=sep+text+(c.phrases?' ':'');
+  ta.dispatchEvent(new Event('input',{bubbles:true}));
+  const label=ta.closest('.field')?.querySelector('label')?.textContent||'notes';
+  toast('Added to '+label);
+}
+
+/* glossary tab */
+let gActive='all',gQuery='';
+function ghl(text,q){const safe=esc(text);if(!q)return safe;const re=new RegExp('('+q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','ig');return safe.replace(re,'<mark>$1</mark>')}
+function renderGlossary(){
+  $('#gchips').innerHTML=[{id:'all',name:'All'},...CATS].map(c=>`<button class="gchip" data-c="${c.id}" aria-pressed="${gActive===c.id}">${esc(c.name)}</button>`).join('');
+  const q=gQuery.trim().toLowerCase();let shown=0;
+  $('#glist').innerHTML=CATS.filter(c=>gActive==='all'||gActive===c.id).map(c=>{
+    const items=c.terms.filter(t=>!q||strip(t[0]).toLowerCase().includes(q)||(t[1]||'').toLowerCase().includes(q)||(t[2]||'').toLowerCase().includes(q));
+    if(!items.length)return '';shown+=items.length;
+    return `<section class="gcat"><h2>${esc(c.name)}</h2><p class="blurb">${esc(c.blurb)}</p><div class="glist">${items.map(t=>c.phrases
+      ?`<div class="gterm"><span class="gp">${t[0]}</span></div>`
+      :`<div class="gterm"><span class="gt">${ghl(t[0],q)}</span><span>${ghl(t[1],q)}</span>${t[2]?`<span class="ve">${ghl(t[2],q)}</span>`:''}</div>`).join('')}</div></section>`;
+  }).join('');
+  $('#gempty').hidden=shown>0;
+  $('#gcount').textContent=shown+(shown===1?' term':' terms');
+  $('#gclear').hidden=!gQuery;
+}
+
 const STAGES=[
  {id:'first',name:'First impression',mins:1,lens:'site',hint:'Land on the home page. Do not click yet.',
   qs:[['Who is this designer?','Name and role are clear straight away'],['What do they specialise in?','A focus is stated, not just "designer"'],['Where should I go next?','There is an obvious first click']]},
@@ -342,7 +663,7 @@ function renderStages(){
     const complete=s.qs?answered===s.qs.length:(draft.site&&draft.reason);
     return `<details class="stage${i===t.cur?' current':''}${complete?' complete':''}" data-id="${s.id}" data-i="${i}" ${openSet.has(s.id)?'open':''}>
       <summary><span class="num">${complete?'✓':i+1}</span><span class="head"><h3>${s.name}</h3><span class="meta"><span>${s.mins} min</span>${lensTag(s.lens)}${s.qs?`<span class="count">${answered}/${s.qs.length}</span>`:''}</span></span><svg class="chev" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3l5 5-5 5" fill="none" stroke="currentColor" stroke-width="2"/></svg></summary>
-      <div class="body"><p class="hint">${esc(s.hint)}</p>${inner}</div></details>`;
+      <div class="body"><p class="hint">${esc(s.hint)}</p>${assistHTML(s)}${inner}</div></details>`;
   }).join('');
   updateContrast();
 }
@@ -481,23 +802,24 @@ function renderLog(){
 }
 
 function setTab(which){
-  const r=which==='review';
-  $('#tab-review').setAttribute('aria-selected',r);$('#tab-log').setAttribute('aria-selected',!r);
-  $('#view-review').hidden=!r;$('#view-log').hidden=r;
-  if(!r)renderLog();
+  ['review','glossary','log'].forEach(t=>{$('#tab-'+t).setAttribute('aria-selected',t===which);$('#view-'+t).hidden=t!==which});
+  if(which==='log')renderLog();
+  if(which==='glossary')renderGlossary();
+  window.scrollTo(0,0);
 }
 
 /* events */
 $('#pName').value=draft.name;$('#pUrl').value=draft.url;
 $('#pName').addEventListener('input',e=>{draft.name=e.target.value;saveDraft()});
 $('#pUrl').addEventListener('input',e=>{draft.url=e.target.value;saveDraft()});
-$('#tab-review').onclick=()=>setTab('review');$('#tab-log').onclick=()=>setTab('log');
+$('#tab-review').onclick=()=>setTab('review');$('#tab-glossary').onclick=()=>setTab('glossary');$('#tab-log').onclick=()=>setTab('log');
 $('#startBtn').onclick=()=>setRunning(!t.running);
 $('#nextBtn').onclick=()=>{if(t.cur===STAGES.length-1){setRunning(false);toast('Review done: save it to your log')}else goStage(t.cur+1)};
 $('#track').addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b)goStage(+b.dataset.go)});
 
 $('#stages').addEventListener('click',e=>{
   const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.ins){insertTerm(b);return}
   if(b.dataset.key){const k=b.dataset.key;draft.answers[k]=draft.answers[k]===b.dataset.v?undefined:b.dataset.v;}
   else if(b.dataset.rate){const map={y:'Strong',p:'Mixed',n:'Weak'};const v=map[b.dataset.v];draft[b.dataset.rate]=draft[b.dataset.rate]===v?'':v;}
   else return;
@@ -524,7 +846,8 @@ document.addEventListener('click',e=>{
 });
 $('#lightbox').addEventListener('click',e=>{if(e.target.id==='lightbox'||e.target.id==='lbClose')closeShot()});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#lightbox').hidden)closeShot()});
-$('#stages').addEventListener('toggle',e=>{},true);
+$('#stages').addEventListener('toggle',e=>{const d=e.target;if(d.dataset&&d.dataset.a){d.open?openAssist.add(d.dataset.a):openAssist.delete(d.dataset.a)}},true);
+$('#stages').addEventListener('focusin',e=>{if(e.target.tagName==='TEXTAREA'){const st=e.target.closest('.stage');if(st)lastTA[st.dataset.id]=e.target.id}});
 
 $('#saveBtn').onclick=()=>{
   if(!draft.name&&!draft.url){toast('Add the portfolio name or URL first');$('#pName').focus();return}
@@ -555,6 +878,9 @@ $('#log').addEventListener('input',e=>{
   const b=el.dataset.pat;patterns[b]=patterns[b]||['','',''];patterns[b][+el.dataset.pi]=el.value;saveLog();
 });
 
+$('#gq').addEventListener('input',e=>{gQuery=e.target.value;renderGlossary()});
+$('#gclear').onclick=()=>{gQuery='';$('#gq').value='';renderGlossary();$('#gq').focus()};
+$('#gchips').addEventListener('click',e=>{const b=e.target.closest('[data-c]');if(!b)return;gActive=b.dataset.c;renderGlossary();window.scrollTo(0,0)});
 buildTrack();renderStages();renderTimer();saveLog();loadDraftShots();
 
 /* backup */
